@@ -467,7 +467,8 @@ void initMPU9150(void)
 	MPU6050_WriteReg(MPU6050_RA_ACCEL_CONFIG , 0x00);  //accel works at 2g
 	MPU6050_WriteReg(MPU6050_RA_INT_ENABLE, 0x01);
 	MPU6050_WriteReg(MPU6050_RA_CONFIG , 0x01);
-	MPU6050_WriteReg(MPU6050_RA_SMPLRT_DIV , 0x04);
+	//MPU6050_WriteReg(MPU6050_RA_INT_PIN_CFG , 0x70);
+	MPU6050_WriteReg(MPU6050_RA_SMPLRT_DIV , 0x00);
 }
 
 
@@ -551,11 +552,12 @@ void getMPU6050Mgn(float *mx,float *my,float *mz)
 	*mz = mgn[2]*10.0f*1229.0f/4096.0f + 270.0f;
 }
 
-void MPU6050_ClearInterupt(void)
-{
-	unsigned char buf[1];
-	MPU6050_ReadData(MPU6050_ACC_OUT, buf, 1);
-}
+//u8 MPU6050_ClearInterupt(void)
+//{
+//	unsigned char buf[1];
+//	MPU6050_ReadData(MPU6050_RA_INT_STATUS, buf, 1);
+//	return *buf;
+//}
 
 float readMPU6050Temp( )
 {

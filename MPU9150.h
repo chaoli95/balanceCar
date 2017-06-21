@@ -26,6 +26,8 @@
 #ifndef MPU9150_H
 #define MPU9150_H
 
+#include "varible.h"
+
 void initMPU9150(void);
 void readMPU6050ID(void);
 float readMPU6050Temp( );
@@ -35,9 +37,9 @@ void readMPU6050GyroFloat(float *gyroData);
 void readMPU6050AccFloat(float *accData);
 void readMPU6050Mgn(int* cmpsData);
 
-void getMPU6050Acc(float *ax,float *ay,float *az);
-void getMPU6050Gyro(float *gx,float *gy,float *gz);
-void getMPU6050Mgn(float *mx,float *my,float *mz);
+//void getMPU6050Acc(float *ax,float *ay,float *az);
+//void getMPU6050Gyro(float *gx,float *gy,float *gz);
+//void getMPU6050Mgn(float *mx,float *my,float *mz);
 
 //private funcions
 void MPU6050_WriteReg(unsigned char addr,unsigned char data);
@@ -46,6 +48,6 @@ void MPU6050_ReadData(unsigned char reg_add,unsigned char*Read,unsigned char num
 void MPU9150_ReadData(unsigned char reg_add,unsigned char*Read,unsigned char num);
 void MPU6050_ReturnTemp(int *Temperature);
 
-void MPU6050_ClearInterupt(void);
+//u8 MPU6050_ClearInterupt(void);
 
 #endif

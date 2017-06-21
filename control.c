@@ -9,12 +9,13 @@
 #include "filter.h"
 #include "MPU9150.h"
 #include <math.h>
-#include "MSP-EXP430F5529_HAL/HAL_Board.h"
-#include "MSP-EXP430F5529_HAL/HAL_Dogs102x6.h"
-#include "gpio.h"
+//#include "MSP-EXP430F5529_HAL/HAL_Board.h"
+//#include "MSP-EXP430F5529_HAL/HAL_Dogs102x6.h"
+//#include "gpio.h"
 #include "varible.h"
 #include "motor.h"
 #include <stdio.h>
+#include <msp430.h>
 
 int Balance_Pwm,Velocity_Pwm,Turn_Pwm;
 u8 Flag_Target;
@@ -24,31 +25,29 @@ int Voltage_Temp,Voltage_Count,Voltage_All;
 
 //char temp[20] = {0};
 
-#pragma vector=PORT2_VECTOR
-__interrupt
-void Port_2(void)
-{
-	switch(P2IFG)
-	{
-	case BIT4:
-		getAngle();
-		//sprintf(temp,"angle:%d",(int)angle);
-		//Dogs102x6_stringDraw(1,1,temp,0);
-		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
-		Moto1=Balance_Pwm;
-		Moto2=Balance_Pwm;
-		Xianfu_Pwm();
-		if(angle > 0) Board_ledOn(LED2);
-		else Board_ledOff(LED2);
-		if(Moto1 > 5000 || Moto1 < - 5000) Board_ledOn(LED3);
-		else Board_ledOff(LED3);
-		setPwm(Moto1/72,Moto2/72);
-		break;
-	default:
-		break;
-	}
-	P2IFG &= ~BIT4;
-}
+//#pragma vector=PORT2_VECTOR
+//__interrupt
+//void Port_2(void)
+//{
+//	switch(P2IFG)
+//	{
+//	case BIT4:
+//		P8OUT ^= BIT1;
+//		getAngle();
+//		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
+//		Moto1=Balance_Pwm;
+//		Moto2=Balance_Pwm;
+//		Xianfu_Pwm();
+//		if(angle > 0) P8OUT |= BIT2;
+//		else P8OUT &= ~BIT2;
+//		setPwm(Moto1/72,Moto2/72);
+//		u8 bit = MPU6050_ClearInterupt();
+//		break;
+//	default:
+//		break;
+//	}
+//	P2IFG &= ~BIT4;
+//}
 
 int balance(float Angle,float Gyro)
 {
@@ -84,7 +83,7 @@ void getAngle(void)
 	Gyro_Balance=-gyro[1];
 	accel[1]=atan2(accel[0],accel[2])*180/PI;
 	gyro[1]=gyro[1]/16.4;
-	Yijielvbo(accel[1],-gyro[1]);
+	Kalman_Filter(accel[1],-gyro[1]);
 	Angle_Balance=angle;                                   //¸üÐÂÆ½ºâÇã½Ç
 	Gyro_Turn=gyro[2];                                      //¸üÐÂ×ªÏò½ÇËÙ¶È
 	Acceleration_Z=accel[2];

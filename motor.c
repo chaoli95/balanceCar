@@ -1,5 +1,6 @@
-#include "driverlib.h"
+//#include "driverlib.h"
 #include "motor.h"
+#include <msp430.h>
 
 #define timer_period 54
 
@@ -9,45 +10,21 @@ void setPwm(int leftpwmin,int rightpwmin)
 
      if (leftpwmin>0)
      {
-    	 GPIO_setOutputHighOnPin(
-    			 GPIO_PORT_P7,
-				 GPIO_PIN1
-                	);
-    	 GPIO_setOutputLowOnPin(
-    			 GPIO_PORT_P7,
-				 GPIO_PIN2
-                	);
+    	 P7OUT |= BIT1;
+    	 P7OUT &= ~BIT2;
      }
      else{
-    	 GPIO_setOutputHighOnPin(
-    			 GPIO_PORT_P7,
-				 GPIO_PIN2
-                	);
-    	 GPIO_setOutputLowOnPin(
-    			 GPIO_PORT_P7,
-				 GPIO_PIN1
-                	);
-        	}
+    	 P7OUT |= BIT2;
+    	 P7OUT &= ~BIT1;
+     }
      if (rightpwmin>0)
      {
-    	 GPIO_setOutputHighOnPin(
-    			 GPIO_PORT_P4,
-				 GPIO_PIN4
-    	 );
-    	 GPIO_setOutputLowOnPin(
-    			 GPIO_PORT_P4,
-				 GPIO_PIN0
-    	 );
+    	 P4OUT |= BIT4;
+    	 P4OUT &= ~BIT0;
      }
      else{
-    	 GPIO_setOutputHighOnPin(
-    			 GPIO_PORT_P4,
-				 GPIO_PIN0
-    	 );
-    	 GPIO_setOutputLowOnPin(
-    			 GPIO_PORT_P4,
-				 GPIO_PIN4
-    	 );
+    	 P4OUT |= BIT0;
+    	 P4OUT &= ~BIT4;
      }
 
      TBCCR3 = abs(leftpwmin)*timer_period/100;
@@ -61,6 +38,11 @@ int abs(int a){
 }
 
 void motorInit(){
+
+	P7DIR |= BIT1+BIT2+BIT3;
+	P4DIR |= BIT0+BIT4;
+	P7OUT |= BIT3;
+
 	P2DIR |= BIT1;                       // P2.0 and P2.1 output
 	P2SEL |= BIT1;                       // P2.0 and P2.1 options select
 	TA1CCR0 = 54;                            // PWM Period/2
@@ -76,22 +58,5 @@ void motorInit(){
 	TBCCR3 = 0;                              // CCR3 PWM duty cycle
 	TBCTL = TBSSEL_2+MC_1;                    // SMCLK, upmode
 
-	GPIO_setAsOutputPin(
-			GPIO_PORT_P7,
-			GPIO_PIN2+GPIO_PIN1+GPIO_PIN3
-	);
-	GPIO_setAsOutputPin(
-			GPIO_PORT_P4,
-			GPIO_PIN0
-	);
-	GPIO_setAsOutputPin(
-			GPIO_PORT_P4,
-			GPIO_PIN4
-	);
-
-	GPIO_setOutputHighOnPin(
-			GPIO_PORT_P7,
-			GPIO_PIN3
-	);
 }
 

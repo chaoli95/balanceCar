@@ -16,46 +16,6 @@ ORDERED_OBJS += \
 "./filter.obj" \
 "./main.obj" \
 "./motor.obj" \
-"./MSP-EXP430F5529_HAL/HAL_Board.obj" \
-"./MSP-EXP430F5529_HAL/HAL_Dogs102x6.obj" \
-"./MSP-EXP430F5529_HAL/HAL_Wheel.obj" \
-"./driverlib/MSP430F5xx_6xx/adc10_a.obj" \
-"./driverlib/MSP430F5xx_6xx/adc12_a.obj" \
-"./driverlib/MSP430F5xx_6xx/aes.obj" \
-"./driverlib/MSP430F5xx_6xx/battbak.obj" \
-"./driverlib/MSP430F5xx_6xx/comp_b.obj" \
-"./driverlib/MSP430F5xx_6xx/crc.obj" \
-"./driverlib/MSP430F5xx_6xx/dac12_a.obj" \
-"./driverlib/MSP430F5xx_6xx/dma.obj" \
-"./driverlib/MSP430F5xx_6xx/eusci_a_spi.obj" \
-"./driverlib/MSP430F5xx_6xx/eusci_a_uart.obj" \
-"./driverlib/MSP430F5xx_6xx/eusci_b_i2c.obj" \
-"./driverlib/MSP430F5xx_6xx/eusci_b_spi.obj" \
-"./driverlib/MSP430F5xx_6xx/flashctl.obj" \
-"./driverlib/MSP430F5xx_6xx/gpio.obj" \
-"./driverlib/MSP430F5xx_6xx/ldopwr.obj" \
-"./driverlib/MSP430F5xx_6xx/mpy32.obj" \
-"./driverlib/MSP430F5xx_6xx/pmap.obj" \
-"./driverlib/MSP430F5xx_6xx/pmm.obj" \
-"./driverlib/MSP430F5xx_6xx/ram.obj" \
-"./driverlib/MSP430F5xx_6xx/ref.obj" \
-"./driverlib/MSP430F5xx_6xx/rtc_a.obj" \
-"./driverlib/MSP430F5xx_6xx/rtc_b.obj" \
-"./driverlib/MSP430F5xx_6xx/rtc_c.obj" \
-"./driverlib/MSP430F5xx_6xx/sd24_b.obj" \
-"./driverlib/MSP430F5xx_6xx/sfr.obj" \
-"./driverlib/MSP430F5xx_6xx/sysctl.obj" \
-"./driverlib/MSP430F5xx_6xx/tec.obj" \
-"./driverlib/MSP430F5xx_6xx/timer_a.obj" \
-"./driverlib/MSP430F5xx_6xx/timer_b.obj" \
-"./driverlib/MSP430F5xx_6xx/timer_d.obj" \
-"./driverlib/MSP430F5xx_6xx/tlv.obj" \
-"./driverlib/MSP430F5xx_6xx/ucs.obj" \
-"./driverlib/MSP430F5xx_6xx/usci_a_spi.obj" \
-"./driverlib/MSP430F5xx_6xx/usci_a_uart.obj" \
-"./driverlib/MSP430F5xx_6xx/usci_b_i2c.obj" \
-"./driverlib/MSP430F5xx_6xx/usci_b_spi.obj" \
-"./driverlib/MSP430F5xx_6xx/wdt_a.obj" \
 "../lnk_msp430f5529.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibmath.a \
@@ -69,11 +29,7 @@ RMDIR := RMDIR /S/Q
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
--include MSP-EXP430F5529_HAL/subdir_vars.mk
--include driverlib/MSP430F5xx_6xx/subdir_vars.mk
 -include subdir_rules.mk
--include MSP-EXP430F5529_HAL/subdir_rules.mk
--include driverlib/MSP430F5xx_6xx/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -170,42 +126,40 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-balanceCar.out \
+balanceCar123.out \
 
 EXE_OUTPUTS__QUOTED += \
-"balanceCar.out" \
+"balanceCar123.out" \
 
 BIN_OUTPUTS += \
-balanceCar.hex \
+balanceCar123.hex \
 
 BIN_OUTPUTS__QUOTED += \
-"balanceCar.hex" \
+"balanceCar123.hex" \
 
 
 # All Target
-all: balanceCar.out
+all: balanceCar123.out
 
 # Tool invocations
-balanceCar.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+balanceCar123.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Linker'
-	"C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/bin/cl430" -vmspx --data_model=restricted --use_hw_mpy=F5 -g --define=__MSP430F5529__ --diag_warning=225 --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU23 --silicon_errata=CPU40 --abi=eabi --printf_support=minimal -z -m"balanceCar.map" --stack_size=160 --heap_size=160 --cinit_hold_wdt=on -i"C:/ti/ccsv6/ccs_base/msp430/include" -i"C:/ti/ccsv6/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/lib" -i"C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/include" --reread_libs --warn_sections --display_error_number --xml_link_info="balanceCar_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "balanceCar.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/bin/cl430" -vmspx --data_model=restricted -O4 --use_hw_mpy=F5 -g --define=__MSP430F5529__ --diag_warning=225 --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU23 --silicon_errata=CPU40 --abi=eabi --printf_support=minimal -z -m"balanceCar123.map" --stack_size=160 --heap_size=160 --cinit_hold_wdt=on -i"C:/ti/ccsv6/ccs_base/msp430/include" -i"C:/ti/ccsv6/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/lib" -i"C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/include" --reread_libs --warn_sections --display_error_number --xml_link_info="balanceCar123_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "balanceCar123.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-balanceCar.hex: $(EXE_OUTPUTS)
+balanceCar123.hex: $(EXE_OUTPUTS)
 	@echo 'Invoking: MSP430 Hex Utility'
-	"C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/bin/hex430" --memwidth=8 --romwidth=8 -o "balanceCar.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/bin/hex430" --memwidth=8 --romwidth=8 -o "balanceCar123.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "I2C.d" "MPU9150.d" "control.d" "filter.d" "main.d" "motor.d" "MSP-EXP430F5529_HAL\HAL_Board.d" "MSP-EXP430F5529_HAL\HAL_Dogs102x6.d" "MSP-EXP430F5529_HAL\HAL_Wheel.d" "driverlib\MSP430F5xx_6xx\adc10_a.d" "driverlib\MSP430F5xx_6xx\adc12_a.d" "driverlib\MSP430F5xx_6xx\aes.d" "driverlib\MSP430F5xx_6xx\battbak.d" "driverlib\MSP430F5xx_6xx\comp_b.d" "driverlib\MSP430F5xx_6xx\crc.d" "driverlib\MSP430F5xx_6xx\dac12_a.d" "driverlib\MSP430F5xx_6xx\dma.d" "driverlib\MSP430F5xx_6xx\eusci_a_spi.d" "driverlib\MSP430F5xx_6xx\eusci_a_uart.d" "driverlib\MSP430F5xx_6xx\eusci_b_i2c.d" "driverlib\MSP430F5xx_6xx\eusci_b_spi.d" "driverlib\MSP430F5xx_6xx\flashctl.d" "driverlib\MSP430F5xx_6xx\gpio.d" "driverlib\MSP430F5xx_6xx\ldopwr.d" "driverlib\MSP430F5xx_6xx\mpy32.d" "driverlib\MSP430F5xx_6xx\pmap.d" "driverlib\MSP430F5xx_6xx\pmm.d" "driverlib\MSP430F5xx_6xx\ram.d" "driverlib\MSP430F5xx_6xx\ref.d" "driverlib\MSP430F5xx_6xx\rtc_a.d" "driverlib\MSP430F5xx_6xx\rtc_b.d" "driverlib\MSP430F5xx_6xx\rtc_c.d" "driverlib\MSP430F5xx_6xx\sd24_b.d" 
-	-$(RM) "driverlib\MSP430F5xx_6xx\sfr.d" "driverlib\MSP430F5xx_6xx\sysctl.d" "driverlib\MSP430F5xx_6xx\tec.d" "driverlib\MSP430F5xx_6xx\timer_a.d" "driverlib\MSP430F5xx_6xx\timer_b.d" "driverlib\MSP430F5xx_6xx\timer_d.d" "driverlib\MSP430F5xx_6xx\tlv.d" "driverlib\MSP430F5xx_6xx\ucs.d" "driverlib\MSP430F5xx_6xx\usci_a_spi.d" "driverlib\MSP430F5xx_6xx\usci_a_uart.d" "driverlib\MSP430F5xx_6xx\usci_b_i2c.d" "driverlib\MSP430F5xx_6xx\usci_b_spi.d" "driverlib\MSP430F5xx_6xx\wdt_a.d" 
-	-$(RM) "I2C.obj" "MPU9150.obj" "control.obj" "filter.obj" "main.obj" "motor.obj" "MSP-EXP430F5529_HAL\HAL_Board.obj" "MSP-EXP430F5529_HAL\HAL_Dogs102x6.obj" "MSP-EXP430F5529_HAL\HAL_Wheel.obj" "driverlib\MSP430F5xx_6xx\adc10_a.obj" "driverlib\MSP430F5xx_6xx\adc12_a.obj" "driverlib\MSP430F5xx_6xx\aes.obj" "driverlib\MSP430F5xx_6xx\battbak.obj" "driverlib\MSP430F5xx_6xx\comp_b.obj" "driverlib\MSP430F5xx_6xx\crc.obj" "driverlib\MSP430F5xx_6xx\dac12_a.obj" "driverlib\MSP430F5xx_6xx\dma.obj" "driverlib\MSP430F5xx_6xx\eusci_a_spi.obj" "driverlib\MSP430F5xx_6xx\eusci_a_uart.obj" "driverlib\MSP430F5xx_6xx\eusci_b_i2c.obj" "driverlib\MSP430F5xx_6xx\eusci_b_spi.obj" "driverlib\MSP430F5xx_6xx\flashctl.obj" "driverlib\MSP430F5xx_6xx\gpio.obj" "driverlib\MSP430F5xx_6xx\ldopwr.obj" "driverlib\MSP430F5xx_6xx\mpy32.obj" "driverlib\MSP430F5xx_6xx\pmap.obj" "driverlib\MSP430F5xx_6xx\pmm.obj" "driverlib\MSP430F5xx_6xx\ram.obj" "driverlib\MSP430F5xx_6xx\ref.obj" "driverlib\MSP430F5xx_6xx\rtc_a.obj" "driverlib\MSP430F5xx_6xx\rtc_b.obj" 
-	-$(RM) "driverlib\MSP430F5xx_6xx\rtc_c.obj" "driverlib\MSP430F5xx_6xx\sd24_b.obj" "driverlib\MSP430F5xx_6xx\sfr.obj" "driverlib\MSP430F5xx_6xx\sysctl.obj" "driverlib\MSP430F5xx_6xx\tec.obj" "driverlib\MSP430F5xx_6xx\timer_a.obj" "driverlib\MSP430F5xx_6xx\timer_b.obj" "driverlib\MSP430F5xx_6xx\timer_d.obj" "driverlib\MSP430F5xx_6xx\tlv.obj" "driverlib\MSP430F5xx_6xx\ucs.obj" "driverlib\MSP430F5xx_6xx\usci_a_spi.obj" "driverlib\MSP430F5xx_6xx\usci_a_uart.obj" "driverlib\MSP430F5xx_6xx\usci_b_i2c.obj" "driverlib\MSP430F5xx_6xx\usci_b_spi.obj" "driverlib\MSP430F5xx_6xx\wdt_a.obj" 
+	-$(RM) "I2C.d" "MPU9150.d" "control.d" "filter.d" "main.d" "motor.d" 
+	-$(RM) "I2C.obj" "MPU9150.obj" "control.obj" "filter.obj" "main.obj" "motor.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

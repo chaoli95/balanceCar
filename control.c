@@ -29,6 +29,9 @@ int Voltage_Temp,Voltage_Count,Voltage_All;
 //__interrupt
 //void Port_2(void)
 //{
+//	P1OUT ^= BIT0;
+//	P2IFG &= ~BIT4;
+//}
 //	switch(P2IFG)
 //	{
 //	case BIT4:
@@ -46,7 +49,7 @@ int Voltage_Temp,Voltage_Count,Voltage_All;
 //	default:
 //		break;
 //	}
-//	P2IFG &= ~BIT4;
+//
 //}
 
 int balance(float Angle,float Gyro)

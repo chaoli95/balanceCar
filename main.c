@@ -1,5 +1,5 @@
 #include <msp430.h>
-#include <stdio.h>
+//#include <stdio.h>
 #include <stdlib.h>
 #include "MPU9150.h"
 #include "I2C.h"
@@ -28,26 +28,28 @@ int main(void)
 {
 	WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
 
-	motorInit();
-	clearI2CPort();
-	initI2C();
-	initMPU9150();
 	P8DIR |= BIT1+BIT2;
 	P1DIR |= BIT0 + BIT1;
 	P8OUT |= BIT1+BIT2;
-	P1DIR |= BIT0+BIT1;
+	P1OUT |= BIT0+BIT1;
 
-	int i;
+	clearI2CPort();
+	initI2C();
+	initMPU9150();
+	motorInit();
+
 	while(1)
 	{
-//		getAngle();
-//		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
-//		Moto1=Balance_Pwm;
-//		Moto2=Balance_Pwm;
-//		Xianfu_Pwm();
-//		if(angle > 0) P8OUT |= BIT2;
-//		else P8OUT &= ~BIT2;
-//		setPwm(Moto1/72,Moto2/72);
+		P8OUT ^= BIT1;
+
+		getAngle();
+		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
+		Moto1=Balance_Pwm;
+		Moto2=Balance_Pwm;
+		Xianfu_Pwm();
+		if(angle > 0) P8OUT |= BIT2;
+		else P8OUT &= ~BIT2;
+		setPwm(Moto1/72,Moto2/72);
 	}
 }
 

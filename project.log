@@ -1,0 +1,11 @@
+
+!CONFIGURATION: 'com.ti.ccstudio.buildDefinitions.MSP430.Debug.1742696634' [Sun May 07 22:57:24 CST 2017]
+
+	!TOOL: 'com.ti.ccstudio.buildDefinitions.MSP430_4.0.exe.compilerDebug.2015552998'
+
+		!WARNING: Unresolved option: com.ti.ccstudio.buildDefinitions.MSP430_4.0.compilerID.ADVICE__POWER
+
+	!TOOL: 'com.ti.ccstudio.buildDefinitions.MSP430_4.0.exe.linkerDebug.1719083144'
+
+		!WARNING: Unresolved option: com.ti.ccstudio.buildDefinitions.MSP430_4.0.linkerID.CINIT_HOLD_WDT
+

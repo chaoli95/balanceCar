@@ -8,11 +8,11 @@
 #include "varible.h"
 #include "motor.h"
 
-int Moto1,Moto2;
-float Angle_Balance,Gyro_Balance,Gyro_Turn;
-u8 delay_50,delay_flag;
-float Acceleration_Z;
-float Balance_Kp=300,Balance_Kd=1,Velocity_Kp=80,Velocity_Ki=0.4;
+volatile int Moto1,Moto2;
+volatile float Angle_Balance,Gyro_Balance,Gyro_Turn;
+volatile u8 delay_50,delay_flag;
+volatile float Acceleration_Z;
+volatile float Balance_Kp=300,Balance_Kd=1,Velocity_Kp=80,Velocity_Ki=0.4;
 
 
 
@@ -29,8 +29,7 @@ int main(void)
 	P2OUT |= BIT4;                            // Set P1.4 as pull-Up resistance
 	P2IES &= ~BIT4;                           // P1.4 Lo/Hi edge
 	P2IFG &= ~BIT4;                           // P1.4 IFG cleared
-	P2IE |= BIT4;                             // P1.4 interrupt enabled
-
+	P2IE = BIT4;                             // P1.4 interrupt enabled
 
 	clearI2CPort();
 	initI2C();
@@ -40,18 +39,10 @@ int main(void)
 //	P1DIR |= BIT1+BIT2+BIT3+BIT4;
 //	P1OUT &= ~BIT1 + ~BIT3;
 
-
 //	int flag = 0;
 	while(1)
 	{
-//		getAngle();
-//		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
-//		Moto1=Balance_Pwm;
-//		Moto2=Balance_Pwm;
-//		Xianfu_Pwm();
-//		if(angle > 0) P8OUT |= BIT2;
-//		else P8OUT &= ~BIT2;
-//		setPwm(Moto1/72,Moto2/72);
+
 	}
 }
 

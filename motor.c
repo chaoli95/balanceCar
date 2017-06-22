@@ -27,15 +27,15 @@ void setPwm(int leftpwmin,int rightpwmin)
     	 P4OUT &= ~BIT4;
      }
 
-     TBCCR3 = abs(leftpwmin)*timer_period/100;
-     TA1CCR2 = abs(rightpwmin)*timer_period/100;
+     TBCCR3 = (leftpwmin>0 ? leftpwmin : -leftpwmin)*timer_period/100;
+     TA1CCR2 = (rightpwmin>0 ? rightpwmin : -rightpwmin)*timer_period/100;
 }
 
-int abs(int a){
-	if (a>=0)
-		return a;
-	else return (0-a);
-}
+//int abs(int a){
+//	if (a>=0)
+//		return a;
+//	else return (0-a);
+//}
 
 void motorInit(){
 

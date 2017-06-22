@@ -12,7 +12,7 @@
 #define ZHONGZHI 3
 #define DIFFERENCE 100
 
-extern	int Balance_Pwm,Velocity_Pwm,Turn_Pwm;
+extern volatile int Balance_Pwm,Velocity_Pwm,Turn_Pwm;
 int EXTI15_10_IRQHandler(void);
 int balance(float angle,float gyro);
 int velocity(int encoder_left,int encoder_right);

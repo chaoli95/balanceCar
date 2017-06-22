@@ -13,12 +13,19 @@
 #include "motor.h"
 #include <stdio.h>
 #include <msp430.h>
+#include "I2C.h"
 
-int Balance_Pwm,Velocity_Pwm,Turn_Pwm;
+volatile int Balance_Pwm,Velocity_Pwm,Turn_Pwm;
+volatile float accel[3]={0};
+volatile float gyro[3]={0};
+
 u8 Flag_Target;
 u32 Flash_R_Count;
 int Voltage_Temp,Voltage_Count,Voltage_All;
 
+
+static unsigned char txData[] =              // Table of data to transmit
+{0,0,0};
 
 //char temp[20] = {0};
 
@@ -26,6 +33,7 @@ int Voltage_Temp,Voltage_Count,Voltage_All;
 __interrupt
 void Port_2(void)
 {
+	WDTCTL = WDTPW + WDTHOLD;
 	P2IE &= ~BIT4;
 	switch(P2IFG)
 	{
@@ -39,12 +47,11 @@ void Port_2(void)
 		if(angle > 0) P8OUT |= BIT2;
 		else P8OUT &= ~BIT2;
 		setPwm(Moto1/72,Moto2/72);
-//		u8 bit = MPU6050_ClearInterupt();
 		break;
 	default:
 		break;
 	}
-	P2IFG &= ~BIT4;
+	P2IFG &= 0x0;
 	P2IE |= BIT4;
 }
 
@@ -71,19 +78,23 @@ void Xianfu_Pwm(void)
 
 void getAngle(void)
 {
-	float accel[3]={0};
-	float gyro[3]={0};
 	unsigned char buf[6];
-	MPU6050_ReadData(MPU6050_GYRO_OUT,buf,6);
+//	MPU6050_ReadData(MPU6050_GYRO_OUT,buf,6);
+	txData[0]=MPU6050_GYRO_OUT;
+	sendI2C(txData,1,NO_STOP);
+	readI2CBytes(6,buf);
 	gyro[0] = (buf[0] << 8) + buf[1];
 	gyro[1] = (buf[2] << 8) + buf[3];
 	gyro[2] = (buf[4] << 8) + buf[5];
-	MPU6050_ReadData(MPU6050_ACC_OUT, buf, 6);
+//	MPU6050_ReadData(MPU6050_ACC_OUT, buf, 6);
+	txData[0]=MPU6050_ACC_OUT;
+	sendI2C(txData,1,NO_STOP);
+	readI2CBytes(6,buf);
 	accel[0] = (buf[0] << 8) + buf[1];
 	accel[1] = (buf[2] << 8) + buf[3];
 	accel[2] = (buf[4] << 8) + buf[5];
-   	readMPU6050GyroFloat(gyro);
-   	readMPU6050AccFloat(accel);
+   	//readMPU6050GyroFloat(gyro);
+   	//readMPU6050AccFloat(accel);
 	if(gyro[1]>32768)  gyro[1]-=65536;
 	if(gyro[2]>32768)  gyro[2]-=65536;
 	if(accel[0]>32768) accel[0]-=65536;

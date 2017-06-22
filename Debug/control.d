@@ -16,6 +16,7 @@ control.obj: C:/ti/ccsv6/ccs_base/msp430/include/msp430f5529.h
 control.obj: C:/ti/ccsv6/ccs_base/msp430/include/in430.h
 control.obj: C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/include/intrinsics.h
 control.obj: C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/include/intrinsics_legacy_undefs.h
+control.obj: ../I2C.h
 
 ../control.c: 
 ../control.h: 
@@ -33,3 +34,4 @@ C:/ti/ccsv6/ccs_base/msp430/include/msp430f5529.h:
 C:/ti/ccsv6/ccs_base/msp430/include/in430.h: 
 C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/include/intrinsics.h: 
 C:/ti/ccsv6/tools/compiler/msp430_15.12.3.LTS/include/intrinsics_legacy_undefs.h: 
+../I2C.h: 

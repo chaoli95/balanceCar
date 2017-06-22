@@ -52,7 +52,7 @@ inline void initI2C()
   P1OUT &= ~0x01;                           // P1.0 = 0
   P1DIR |= 0x01;                            // P1.0 output
 
-  WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
+  //WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
   P3SEL |= 0x03;                            // Assign I2C pins to USCI_B0
   UCB0CTL1 |= UCSWRST;                      // Enable SW reset
   UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC;     // I2C Master, synchronous mode

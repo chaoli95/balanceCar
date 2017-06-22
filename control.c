@@ -9,9 +9,6 @@
 #include "filter.h"
 #include "MPU9150.h"
 #include <math.h>
-//#include "MSP-EXP430F5529_HAL/HAL_Board.h"
-//#include "MSP-EXP430F5529_HAL/HAL_Dogs102x6.h"
-//#include "gpio.h"
 #include "varible.h"
 #include "motor.h"
 #include <stdio.h>
@@ -25,32 +22,31 @@ int Voltage_Temp,Voltage_Count,Voltage_All;
 
 //char temp[20] = {0};
 
-//#pragma vector=PORT2_VECTOR
-//__interrupt
-//void Port_2(void)
-//{
-//	P1OUT ^= BIT0;
-//	P2IFG &= ~BIT4;
-//}
-//	switch(P2IFG)
-//	{
-//	case BIT4:
-//		P8OUT ^= BIT1;
-//		getAngle();
-//		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
-//		Moto1=Balance_Pwm;
-//		Moto2=Balance_Pwm;
-//		Xianfu_Pwm();
-//		if(angle > 0) P8OUT |= BIT2;
-//		else P8OUT &= ~BIT2;
-//		setPwm(Moto1/72,Moto2/72);
+#pragma vector=PORT2_VECTOR
+__interrupt
+void Port_2(void)
+{
+	P2IE &= ~BIT4;
+	switch(P2IFG)
+	{
+	case BIT4:
+		P8OUT ^= BIT1;
+		getAngle();
+		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
+		Moto1=Balance_Pwm;
+		Moto2=Balance_Pwm;
+		Xianfu_Pwm();
+		if(angle > 0) P8OUT |= BIT2;
+		else P8OUT &= ~BIT2;
+		setPwm(Moto1/72,Moto2/72);
 //		u8 bit = MPU6050_ClearInterupt();
-//		break;
-//	default:
-//		break;
-//	}
-//
-//}
+		break;
+	default:
+		break;
+	}
+	P2IFG &= ~BIT4;
+	P2IE |= BIT4;
+}
 
 int balance(float Angle,float Gyro)
 {
@@ -77,6 +73,15 @@ void getAngle(void)
 {
 	float accel[3]={0};
 	float gyro[3]={0};
+	unsigned char buf[6];
+	MPU6050_ReadData(MPU6050_GYRO_OUT,buf,6);
+	gyro[0] = (buf[0] << 8) + buf[1];
+	gyro[1] = (buf[2] << 8) + buf[3];
+	gyro[2] = (buf[4] << 8) + buf[5];
+	MPU6050_ReadData(MPU6050_ACC_OUT, buf, 6);
+	accel[0] = (buf[0] << 8) + buf[1];
+	accel[1] = (buf[2] << 8) + buf[3];
+	accel[2] = (buf[4] << 8) + buf[5];
    	readMPU6050GyroFloat(gyro);
    	readMPU6050AccFloat(accel);
 	if(gyro[1]>32768)  gyro[1]-=65536;
@@ -86,7 +91,7 @@ void getAngle(void)
 	Gyro_Balance=-gyro[1];
 	accel[1]=atan2(accel[0],accel[2])*180/PI;
 	gyro[1]=gyro[1]/16.4;
-	Kalman_Filter(accel[1],-gyro[1]);
+	Yijielvbo(accel[1],-gyro[1]);
 	Angle_Balance=angle;                                   //¸üÐÂÆ½ºâÇã½Ç
 	Gyro_Turn=gyro[2];                                      //¸üÐÂ×ªÏò½ÇËÙ¶È
 	Acceleration_Z=accel[2];

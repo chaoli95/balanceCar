@@ -25,6 +25,7 @@ extern volatile float Angle_Balance,Gyro_Balance,Gyro_Turn;           //∆Ω∫‚«„Ω«
 extern volatile u8 delay_50,delay_flag;
 extern volatile float Acceleration_Z;
 extern volatile float Balance_Kp,Balance_Kd,Velocity_Kp,Velocity_Ki;
+extern volatile int Encoder_Left,Encoder_Right;
 //extern u16 PID_Parameter[10],Flash_Parameter[10];
 
 

@@ -57,7 +57,7 @@ int main(void)
 	TA2CTL = TASSEL_2 + MC_2 + ID_1;
 
 	TA0CCTL0 = CCIE;
-	TA0CCR0 = 10450;
+	TA0CCR0 = 104500;
 	TA0CTL = TASSEL_2 + MC_1 + TACLR;
 
 	clearI2CPort();
@@ -68,22 +68,35 @@ int main(void)
 	while(1)
 	{
 		WDTCTL = WDTPW+WDTCNTCL;
-			P8OUT ^= BIT1;
-			getAngle();
-			//Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
-			Velocity_Pwm=velocity(Encoder_Left,Encoder_Right);
-			Moto1=Balance_Pwm-Velocity_Pwm;
-			Moto2=Balance_Pwm-Velocity_Pwm;
-			Xianfu_Pwm();
-			if(angle > 0) P8OUT |= BIT2;
-			else P8OUT &= ~BIT2;
-			if(angle > - 15 && angle < 15)
-			{
-				int a = (int)angle;
-				P1OUT &= ~(BIT1+BIT2+BIT3+BIT4);
-				P1OUT |= a << 1;
-			}
-			setPwm(Moto1/72,Moto2/72);
+		P8OUT ^= BIT1;
+//		getAngle();
+//		//Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
+//		Velocity_Pwm=velocity(Encoder_Left,Encoder_Right);
+//		Moto1=Balance_Pwm-Velocity_Pwm;
+//		Moto2=Balance_Pwm-Velocity_Pwm;
+//		Xianfu_Pwm();
+		if(Encoder_Left >= 0) P8OUT |= BIT2;
+		else P8OUT &= ~BIT2;
+//		if(angle > - 15 && angle < 15)
+//		{
+//			int a = (int)angle;
+			P1OUT &= ~(BIT1+BIT2+BIT3+BIT4);
+//			P1OUT |= a << 1;
+//		}
+		if(Encoder_Left > -5 && Encoder_Left < 5)
+		{
+			P1OUT |= BIT1;
+		} else if (Encoder_Left > -35 && Encoder_Left < 35)
+		{
+			P1OUT |= BIT2;
+		} else if(Encoder_Left > -45 && Encoder_Left < 45)
+		{
+			P1OUT |= BIT3;
+		} else
+		{
+			P1OUT |= BIT4;
+		}
+		setPwm(70,70);
 	}
 }
 

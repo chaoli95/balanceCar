@@ -73,27 +73,26 @@ int balance(float Angle,float Gyro)
 
 int velocity(int encoder_left,int encoder_right)
 {
-	static float Velocity,Encoder_Least,Encoder,Movement;
-	static float Encoder_Integral,Target_Velocity;
-	//=============Ò£¿ØÇ°½øºóÍË²¿·Ö=======================//
-//	if(Bi_zhang==1&&Flag_sudu==1)  Target_Velocity=45;                 //Èç¹û½øÈë±ÜÕÏÄ£Ê½,×Ô¶¯½øÈëµÍËÙÄ£Ê½
-//    else 	                         Target_Velocity=110;
-//	if(1==Flag_Qian)    	Movement=Target_Velocity/Flag_sudu;	         //===Ç°½ø±êÖ¾Î»ÖÃ1
-//	else if(1==Flag_Hou)	Movement=-Target_Velocity/Flag_sudu;         //===ºóÍË±êÖ¾Î»ÖÃ1
-//	else  Movement=0;
-//	if(Bi_zhang==1&&Distance<500&&Flag_Left!=1&&Flag_Right!=1)        //±ÜÕÏ±êÖ¾Î»ÖÃ1ÇÒ·ÇÒ£¿Ø×ªÍäµÄÊ±ºò£¬½øÈë±ÜÕÏÄ£Ê½
-//		Movement=-Target_Velocity/Flag_sudu;
-   //=============ËÙ¶ÈPI¿ØÖÆÆ÷=======================//
+	static float Velocity,Encoder_Least,Encoder;
+	static float Encoder_Integral;
 	Encoder_Least =(Encoder_Left+Encoder_Right)-0;                    //===»ñÈ¡×îÐÂËÙ¶ÈÆ«²î==²âÁ¿ËÙ¶È£¨×óÓÒ±àÂëÆ÷Ö®ºÍ£©-Ä¿±êËÙ¶È£¨´Ë´¦ÎªÁã£©
 	Encoder *= 0.8;		                                                //===Ò»½×µÍÍ¨ÂË²¨Æ÷
 	Encoder += Encoder_Least*0.2;	                                    //===Ò»½×µÍÍ¨ÂË²¨Æ÷
 	Encoder_Integral +=Encoder;                                       //===»ý·Ö³öÎ»ÒÆ »ý·ÖÊ±¼ä£º10ms
-	Encoder_Integral=Encoder_Integral-Movement;                       //===½ÓÊÕÒ£¿ØÆ÷Êý¾Ý£¬¿ØÖÆÇ°½øºóÍË
+	//Encoder_Integral=Encoder_Integral-Movement;                       //===½ÓÊÕÒ£¿ØÆ÷Êý¾Ý£¬¿ØÖÆÇ°½øºóÍË
 	if(Encoder_Integral>10000)  	Encoder_Integral=10000;             //===»ý·ÖÏÞ·ù
 	if(Encoder_Integral<-10000)	Encoder_Integral=-10000;              //===»ý·ÖÏÞ·ù
 	Velocity=Encoder*Velocity_Kp+Encoder_Integral*Velocity_Ki;                          //===ËÙ¶È¿ØÖÆ
 //	if(Turn_Off(Angle_Balance,Voltage)==1||Flag_Stop==1)   Encoder_Integral=0;      //===µç»ú¹Ø±ÕºóÇå³ý»ý·Ö
 	return Velocity;
+}
+
+int turn(int encoder_left,int encoder_right,float gyro)//×ªÏò¿ØÖÆ
+{
+	 static float Turn_Target,Turn,Encoder_temp,Turn_Convert=0.9,Turn_Count;
+	  float Kp=42,Kd=0;
+		Turn=-Turn_Target*Kp -gyro*Kd;                 //===½áºÏZÖáÍÓÂÝÒÇ½øÐÐPD¿ØÖÆ
+	  return Turn;
 }
 
 void Xianfu_Pwm(void)

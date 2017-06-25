@@ -22,7 +22,7 @@ volatile int Moto1,Moto2;
 volatile float Angle_Balance,Gyro_Balance,Gyro_Turn;
 volatile u8 delay_50,delay_flag;
 volatile float Acceleration_Z;
-volatile float Balance_Kp=0 ,Balance_Kd=0,Velocity_Kp=70,Velocity_Ki=0.35;
+volatile float Balance_Kp=450 ,Balance_Kd=1.0,Velocity_Kp=-80,Velocity_Ki=-0.4;
 volatile int Encoder_Left,Encoder_Right;
 volatile u16 last;
 volatile u16 now;
@@ -41,23 +41,20 @@ int main(void)
 	P8DIR |= BIT1+BIT2;
 	P8OUT |= BIT1+BIT2;
 
-	P1DIR |= BIT1+BIT2+BIT3+BIT4+BIT5+BIT6;
-	P1OUT &= ~(BIT1+BIT2+BIT3+BIT4+BIT5+BIT6);
+	P1DIR |= BIT1+BIT2+BIT3+BIT4+BIT5;
+	P1OUT &= ~(BIT1+BIT2+BIT3+BIT4+BIT5);
 
-	//initialize encoder interrupt
-	//P2REN |= BIT4 + BIT3;                            // Enable P2.4 internal resistance
-	//P2OUT |= BIT4 + BIT3;                            // Set P2.4 as pull-Up resistance
-	P2SEL |= BIT4 + BIT3;
-//	P2IES &= ~BIT4 + ~BIT3;                           // P2.4 Lo/Hi edge
-//	P2IFG &= ~BIT4 + ~BIT4;                           // P2.4 IFG cleared
-//	P2IE = BIT4 + BIT3;                             // P2.4 interrupt enabled
+	P6DIR &= ~(BIT4 + BIT6);
+	//P6SEL |= BIT4 + BIT6;
 
-	TA2CCTL1 = CM_3+CCIS_0+SCS+CAP+CCIE;
-	TA2CCTL0 = CM_3+CCIS_0+SCS+CAP+CCIE;
+	P2SEL |= BIT3 + BIT4;
+
+	TA2CCTL1 = CM_1+CCIS_0+SCS+CAP+CCIE;//p2.4
+//	TA2CCTL0 = CM_1+CCIS_0+SCS+CAP+CCIE;//p2.3
 	TA2CTL = TASSEL_2 + MC_2 + ID_1;
 
 	TA0CCTL0 = CCIE;
-	TA0CCR0 = 104500;
+	TA0CCR0 = 0xffff;
 	TA0CTL = TASSEL_2 + MC_1 + TACLR;
 
 	clearI2CPort();
@@ -69,80 +66,77 @@ int main(void)
 	{
 		WDTCTL = WDTPW+WDTCNTCL;
 		P8OUT ^= BIT1;
-//		getAngle();
-//		//Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
-//		Velocity_Pwm=velocity(Encoder_Left,Encoder_Right);
-//		Moto1=Balance_Pwm-Velocity_Pwm;
-//		Moto2=Balance_Pwm-Velocity_Pwm;
-//		Xianfu_Pwm();
-		if(Encoder_Left >= 0) P8OUT |= BIT2;
-		else P8OUT &= ~BIT2;
-//		if(angle > - 15 && angle < 15)
-//		{
-//			int a = (int)angle;
+		getAngle();
+		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
+		Velocity_Pwm=velocity(Encoder_Left,Encoder_Left);
+		Moto1=Balance_Pwm-Velocity_Pwm;
+		Moto2=Balance_Pwm-Velocity_Pwm;
+		Xianfu_Pwm();
+		if(Encoder_Left >= 0) P8OUT |= BIT1;
+		else P8OUT &= ~BIT1;
+		if(angle > - 15 && angle < 15)
+		{
+			int a = (int)angle;
 			P1OUT &= ~(BIT1+BIT2+BIT3+BIT4);
-//			P1OUT |= a << 1;
-//		}
-		if(Encoder_Left > -5 && Encoder_Left < 5)
-		{
-			P1OUT |= BIT1;
-		} else if (Encoder_Left > -35 && Encoder_Left < 35)
-		{
-			P1OUT |= BIT2;
-		} else if(Encoder_Left > -45 && Encoder_Left < 45)
-		{
-			P1OUT |= BIT3;
-		} else
-		{
-			P1OUT |= BIT4;
+			P1OUT |= a << 1;
 		}
-		setPwm(70,70);
+//		P1OUT &= ~(BIT1+BIT2+BIT3+BIT4+BIT5+BIT6);
+//		if(Encoder_Left > -25 && Encoder_Left < 25)
+//		{
+//			P1OUT |= BIT1;
+//		} else if (Encoder_Left > -45 && Encoder_Left < 45)
+//		{
+//			P1OUT |= BIT2;
+//		} else if(Encoder_Left > -55 && Encoder_Left < 55)
+//		{
+//			P1OUT |= BIT3;
+//		} else
+//		{
+//			P1OUT |= BIT4;
+//		}
+		__no_operation();
+		setPwm(Moto1/72,Moto2/72);
+//		setPwm(-5,-5);
 	}
 }
 
-//#pragma vector=PORT2_VECTOR
-//__interrupt void Port_2(void)
+#pragma vector = PORT2_VECTOR
+__interrupt void Port2_ISR(void)
+{
+
+}
+
+//#pragma vector=TIMER2_A0_VECTOR
+//__interrupt void Timer2_A0_ISR(void)
 //{
-//	switch(P2IFG)
+//	if(P6IN&BIT6)
 //	{
-//	case BIT3:
-//
-//		break;
-//	case BIT4:
-//
-//		break;
-//	default:
-//		break;
+//		++tempERight;
+//		P8OUT |= BIT1;
+//	} else
+//	{
+//		--tempERight;
+//		P8OUT &= ~BIT1;
 //	}
 //}
-
-#pragma vector=TIMER2_A0_VECTOR
-__interrupt void Timer2_A0_ISR(void)
-{
-	if(P6IN & BIT6)
-	{
-		++tempERight;
-	} else {
-		--tempERight;
-	}
-}
 
 #pragma vector=TIMER2_A1_VECTOR
 __interrupt void TIMER2_A1_ISR(void)
 {
-
+	P1OUT ^= BIT5;
 	switch(__even_in_range(TA2IV,14))
 	{
 	case  0: break;                          // No interrupt
 	case  2:
-		//P1OUT ^= BIT2;
 		if(P6IN & BIT4)
 		{
 			++tempELeft;
-		} else {
+			P8OUT |= BIT2;
+		} else
+		{
 			--tempELeft;
+			P8OUT &= ~BIT2;
 		}
-		__no_operation();
 		break;                          // CCR1 not used
 	case  4: break;                          // CCR2 not used
 	case  6: break;                          // reserved
@@ -159,6 +153,7 @@ __interrupt void TIMER2_A1_ISR(void)
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void TIMER0_A0_ISR(void)
 {
+	__no_operation();
 
 	Encoder_Left = tempELeft;
 	Encoder_Right = tempERight;

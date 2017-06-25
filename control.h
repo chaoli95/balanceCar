@@ -9,7 +9,7 @@
 #define CONTROL_H_
 
 #define	PI		3.14159265358979323846	/* pi */
-#define ZHONGZHI 3
+#define ZHONGZHI 2
 #define DIFFERENCE 100
 
 extern volatile int Balance_Pwm,Velocity_Pwm,Turn_Pwm;

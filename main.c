@@ -49,8 +49,8 @@ int main(void)
 
 	P2SEL |= BIT3 + BIT4;
 
-	TA2CCTL1 = CM_1+CCIS_0+SCS+CAP+CCIE;//p2.4
-//	TA2CCTL0 = CM_1+CCIS_0+SCS+CAP+CCIE;//p2.3
+	TA2CCTL1 = CM_1+CCIS_0+/*SCS+*/CAP+CCIE;//p2.4
+	TA2CCTL0 = CM_1+CCIS_0+/*SCS+*/CAP+CCIE;//p2.3
 	TA2CTL = TASSEL_2 + MC_2 + ID_1;
 
 	TA0CCTL0 = CCIE;
@@ -67,58 +67,58 @@ int main(void)
 		WDTCTL = WDTPW+WDTCNTCL;
 		P8OUT ^= BIT1;
 		getAngle();
-		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
-		Velocity_Pwm=velocity(Encoder_Left,Encoder_Left);
+//		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
+		Velocity_Pwm=velocity(Encoder_Left,Encoder_Right);
 		Moto1=Balance_Pwm-Velocity_Pwm;
 		Moto2=Balance_Pwm-Velocity_Pwm;
 		Xianfu_Pwm();
-		if(Encoder_Left >= 0) P8OUT |= BIT1;
-		else P8OUT &= ~BIT1;
-		if(angle > - 15 && angle < 15)
-		{
-			int a = (int)angle;
-			P1OUT &= ~(BIT1+BIT2+BIT3+BIT4);
-			P1OUT |= a << 1;
-		}
-//		P1OUT &= ~(BIT1+BIT2+BIT3+BIT4+BIT5+BIT6);
-//		if(Encoder_Left > -25 && Encoder_Left < 25)
+//		if(Encoder_Left >= 0) P8OUT |= BIT1;
+//		else P8OUT &= ~BIT1;
+//		if(angle > - 15 && angle < 15)
 //		{
-//			P1OUT |= BIT1;
-//		} else if (Encoder_Left > -45 && Encoder_Left < 45)
-//		{
-//			P1OUT |= BIT2;
-//		} else if(Encoder_Left > -55 && Encoder_Left < 55)
-//		{
-//			P1OUT |= BIT3;
-//		} else
-//		{
-//			P1OUT |= BIT4;
+//			int a = (int)angle;
+//			P1OUT &= ~(BIT1+BIT2+BIT3+BIT4);
+//			P1OUT |= a << 1;
 //		}
+		P1OUT &= ~(BIT1+BIT2+BIT3+BIT4+BIT5+BIT6);
+		if(Encoder_Left > -25 && Encoder_Left < 25)
+		{
+			P1OUT |= BIT1;
+		} else if (Encoder_Left > -45 && Encoder_Left < 45)
+		{
+			P1OUT |= BIT2;
+		} else if(Encoder_Left > -55 && Encoder_Left < 55)
+		{
+			P1OUT |= BIT3;
+		} else
+		{
+			P1OUT |= BIT4;
+		}
 		__no_operation();
 		setPwm(Moto1/72,Moto2/72);
 //		setPwm(-5,-5);
 	}
 }
 
-#pragma vector = PORT2_VECTOR
-__interrupt void Port2_ISR(void)
-{
-
-}
-
-//#pragma vector=TIMER2_A0_VECTOR
-//__interrupt void Timer2_A0_ISR(void)
+//#pragma vector = PORT2_VECTOR
+//__interrupt void Port2_ISR(void)
 //{
-//	if(P6IN&BIT6)
-//	{
-//		++tempERight;
-//		P8OUT |= BIT1;
-//	} else
-//	{
-//		--tempERight;
-//		P8OUT &= ~BIT1;
-//	}
+//
 //}
+
+#pragma vector=TIMER2_A0_VECTOR
+__interrupt void Timer2_A0_ISR(void)
+{
+	if(P6IN & BIT6)
+	{
+		++tempERight;
+		P8OUT |= BIT1;
+	} else
+	{
+		--tempERight;
+		P8OUT &= ~BIT1;
+	}
+}
 
 #pragma vector=TIMER2_A1_VECTOR
 __interrupt void TIMER2_A1_ISR(void)
@@ -156,7 +156,7 @@ __interrupt void TIMER0_A0_ISR(void)
 	__no_operation();
 
 	Encoder_Left = tempELeft;
-	Encoder_Right = tempERight;
+	Encoder_Right = -tempERight;
 	tempELeft = 0;
 	tempERight = 0;
 }

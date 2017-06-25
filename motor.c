@@ -4,6 +4,7 @@
 
 #define u16 unsigned int
 #define timer_period 100
+#define AMPLITUDE 95
 
 void setPwm(int leftpwmin,int rightpwmin)
 {
@@ -27,10 +28,11 @@ void setPwm(int leftpwmin,int rightpwmin)
     	 P4OUT |= BIT0;
     	 P4OUT &= ~BIT4;
      }
-     //u16 a = (leftpwmin>0 ? leftpwmin : -leftpwmin)*timer_period/100;
+     leftpwmin = leftpwmin>0 ? leftpwmin : -leftpwmin;
+     rightpwmin = rightpwmin>0 ? rightpwmin : -rightpwmin;
      __no_operation();
-     TBCCR3 = (u16)(leftpwmin>0 ? leftpwmin : -leftpwmin)*timer_period/100;
-     TA1CCR2 = (u16)(rightpwmin>0 ? rightpwmin : -rightpwmin)*timer_period/100;
+     TBCCR3 = (u16)(leftpwmin>AMPLITUDE ? AMPLITUDE : leftpwmin)*timer_period/100;
+     TA1CCR2 = (u16)(rightpwmin>AMPLITUDE ? AMPLITUDE : rightpwmin)*timer_period/100;
 }
 
 //int abs(int a){

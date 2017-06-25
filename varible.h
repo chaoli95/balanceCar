@@ -24,9 +24,16 @@ extern volatile float Angle_Balance,Gyro_Balance,Gyro_Turn;           //Æ½ºâÇã½Ç
 //extern u32 Distance;                                           //³¬Éù²¨²â¾à
 extern volatile u8 delay_50,delay_flag;
 extern volatile float Acceleration_Z;
-extern volatile float Balance_Kp,Balance_Kd,Velocity_Kp,Velocity_Ki;
+//extern volatile float Balance_Kp,Balance_Kd,Velocity_Kp,Velocity_Ki;
 extern volatile int Encoder_Left,Encoder_Right;
 //extern u16 PID_Parameter[10],Flash_Parameter[10];
+
+#define Balance_Kp 500
+#define Balance_Kd 0
+#define Velocity_Kp -80
+#define Velocity_Ki -0.4
+#define Turn_Kp 42
+#define Turn_Kd 0
 
 
 #endif /* VARIBLE_H_ */

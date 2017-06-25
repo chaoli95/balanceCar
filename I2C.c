@@ -25,14 +25,14 @@
 #include <msp430.h>
 #include "I2C.h"
 
-unsigned char *PTxData;                     // Pointer to TX data
-unsigned char TXByteCtr;
-unsigned char sending;
-unsigned char *PRxData;                     // Pointer to RX data
-unsigned char RXByteCtr;
-unsigned char RxBuffer[10];       // Allocate 128 byte of RAM
-unsigned char reading;
-unsigned char stop=0;
+volatile unsigned char *PTxData;                     // Pointer to TX data
+volatile unsigned char TXByteCtr;
+volatile unsigned char sending;
+volatile unsigned char *PRxData;                     // Pointer to RX data
+volatile unsigned char RXByteCtr;
+volatile unsigned char RxBuffer[10];       // Allocate 128 byte of RAM
+volatile unsigned char reading;
+volatile unsigned char stop=0;
 
 inline void clearI2CPort()
 {

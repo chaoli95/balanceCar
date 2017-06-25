@@ -19,17 +19,15 @@
 #include "motor.h"
 
 volatile int Moto1,Moto2;
-volatile float Angle_Balance,Gyro_Balance,Gyro_Turn;
+volatile float Angle_Balance,Gyro_Turn;
+volatile float Gyro_Balance;
 volatile u8 delay_50,delay_flag;
 volatile float Acceleration_Z;
-volatile float Balance_Kp=450 ,Balance_Kd=1.0,Velocity_Kp=-80,Velocity_Ki=-0.4;
 volatile int Encoder_Left,Encoder_Right;
 volatile u16 last;
 volatile u16 now;
 volatile u8 timer0Count; 	//wait for 0.1s
 volatile int tempELeft, tempERight;
-
-void clearEncoderCounter(void);
 
 int main(void)
  {
@@ -65,38 +63,47 @@ int main(void)
 	while(1)
 	{
 		WDTCTL = WDTPW+WDTCNTCL;
+
+		__no_operation();
+
 		P8OUT ^= BIT1;
-		getAngle();
-//		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
-		Velocity_Pwm=velocity(Encoder_Left,Encoder_Right);
+		__no_operation();
+		getAngle(&Gyro_Balance, &Angle_Balance, &Gyro_Turn, &Acceleration_Z);
+		__no_operation();
+		Balance_Pwm =balance(Angle_Balance,Gyro_Balance);
+		__no_operation();
+//		Velocity_Pwm=velocity(Encoder_Left,Encoder_Right);
 		Moto1=Balance_Pwm-Velocity_Pwm;
 		Moto2=Balance_Pwm-Velocity_Pwm;
-		Xianfu_Pwm();
-//		if(Encoder_Left >= 0) P8OUT |= BIT1;
-//		else P8OUT &= ~BIT1;
-//		if(angle > - 15 && angle < 15)
-//		{
-//			int a = (int)angle;
-//			P1OUT &= ~(BIT1+BIT2+BIT3+BIT4);
-//			P1OUT |= a << 1;
-//		}
-		P1OUT &= ~(BIT1+BIT2+BIT3+BIT4+BIT5+BIT6);
-		if(Encoder_Left > -25 && Encoder_Left < 25)
+		__no_operation();
+//		Xianfu_Pwm(&Moto1, &Moto2);
+		__no_operation();
+		if(Encoder_Left >= 0) P8OUT |= BIT1;
+		else P8OUT &= ~BIT1;
+		if(angle > - 15 && angle < 15)
 		{
-			P1OUT |= BIT1;
-		} else if (Encoder_Left > -45 && Encoder_Left < 45)
-		{
-			P1OUT |= BIT2;
-		} else if(Encoder_Left > -55 && Encoder_Left < 55)
-		{
-			P1OUT |= BIT3;
-		} else
-		{
-			P1OUT |= BIT4;
+			int a = (int)angle;
+			P1OUT &= ~(BIT1+BIT2+BIT3+BIT4);
+			P1OUT |= a << 1;
 		}
+//		P1OUT &= ~(BIT1+BIT2+BIT3+BIT4+BIT5+BIT6);
+//		if(Encoder_Left > -25 && Encoder_Left < 25)
+//		{
+//			P1OUT |= BIT1;
+//		} else if (Encoder_Left > -45 && Encoder_Left < 45)
+//		{
+//			P1OUT |= BIT2;
+//		} else if(Encoder_Left > -55 && Encoder_Left < 55)
+//		{
+//			P1OUT |= BIT3;
+//		} else
+//		{
+//			P1OUT |= BIT4;
+//		}
 		__no_operation();
 		setPwm(Moto1/72,Moto2/72);
 //		setPwm(-5,-5);
+		__no_operation();
 	}
 }
 
@@ -112,11 +119,11 @@ __interrupt void Timer2_A0_ISR(void)
 	if(P6IN & BIT6)
 	{
 		++tempERight;
-		P8OUT |= BIT1;
+//		P8OUT |= BIT1;
 	} else
 	{
 		--tempERight;
-		P8OUT &= ~BIT1;
+//		P8OUT &= ~BIT1;
 	}
 }
 
@@ -131,11 +138,11 @@ __interrupt void TIMER2_A1_ISR(void)
 		if(P6IN & BIT4)
 		{
 			++tempELeft;
-			P8OUT |= BIT2;
+//			P8OUT |= BIT2;
 		} else
 		{
 			--tempELeft;
-			P8OUT &= ~BIT2;
+//			P8OUT &= ~BIT2;
 		}
 		break;                          // CCR1 not used
 	case  4: break;                          // CCR2 not used
@@ -144,6 +151,7 @@ __interrupt void TIMER2_A1_ISR(void)
 	case 10: break;                          // reserved
 	case 12: break;                          // reserved
 	case 14:
+		__no_operation();
 		//P1OUT ^= BIT1;
 		break;                          // overflow
 	default: break;

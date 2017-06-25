@@ -64,9 +64,9 @@ int balance(float Angle,float Gyro)
 {
 	float Bias;
 	int balance;
-	Bias=Angle-ZHONGZHI;       //===Çó³öÆ½ºâµÄ½Ç¶ÈÖÐÖµ ºÍ»úÐµÏà¹Ø
+	Bias=Angle-ZHONGZHI;
 
-	balance=Balance_Kp*Bias+Gyro*Balance_Kd;   //===¼ÆËãÆ½ºâ¿ØÖÆµÄµç»úPWM  PD¿ØÖÆ   kpÊÇPÏµÊý kdÊÇDÏµÊý
+	balance=Balance_Kp*Bias+Gyro*Balance_Kd;
 	__no_operation();
 	return balance;
 }
@@ -75,68 +75,81 @@ int velocity(int encoder_left,int encoder_right)
 {
 	static float Velocity,Encoder_Least,Encoder;
 	static float Encoder_Integral;
-	Encoder_Least =(Encoder_Left+Encoder_Right)-0;                    //===»ñÈ¡×îÐÂËÙ¶ÈÆ«²î==²âÁ¿ËÙ¶È£¨×óÓÒ±àÂëÆ÷Ö®ºÍ£©-Ä¿±êËÙ¶È£¨´Ë´¦ÎªÁã£©
-	Encoder *= 0.8;		                                                //===Ò»½×µÍÍ¨ÂË²¨Æ÷
-	Encoder += Encoder_Least*0.2;	                                    //===Ò»½×µÍÍ¨ÂË²¨Æ÷
-	Encoder_Integral +=Encoder;                                       //===»ý·Ö³öÎ»ÒÆ »ý·ÖÊ±¼ä£º10ms
-	//Encoder_Integral=Encoder_Integral-Movement;                       //===½ÓÊÕÒ£¿ØÆ÷Êý¾Ý£¬¿ØÖÆÇ°½øºóÍË
-	if(Encoder_Integral>10000)  	Encoder_Integral=10000;             //===»ý·ÖÏÞ·ù
-	if(Encoder_Integral<-10000)	Encoder_Integral=-10000;              //===»ý·ÖÏÞ·ù
-	Velocity=Encoder*Velocity_Kp+Encoder_Integral*Velocity_Ki;                          //===ËÙ¶È¿ØÖÆ
-//	if(Turn_Off(Angle_Balance,Voltage)==1||Flag_Stop==1)   Encoder_Integral=0;      //===µç»ú¹Ø±ÕºóÇå³ý»ý·Ö
+	Encoder_Least =(Encoder_Left+Encoder_Right)-0;
+	Encoder *= 0.8;
+	Encoder += Encoder_Least*0.2;
+	Encoder_Integral +=Encoder;
+	//Encoder_Integral=Encoder_Integral-Movement;
+	if(Encoder_Integral>10000)  	Encoder_Integral=10000;
+	if(Encoder_Integral<-10000)	Encoder_Integral=-10000;
+	Velocity=Encoder*Velocity_Kp+Encoder_Integral*Velocity_Ki;
+//	if(Turn_Off(Angle_Balance,Voltage)==1||Flag_Stop==1)   Encoder_Integral=0;
 	return Velocity;
 }
 
-int turn(int encoder_left,int encoder_right,float gyro)//×ªÏò¿ØÖÆ
+int turn(int encoder_left,int encoder_right,float gyro)
 {
-	 static float Turn_Target,Turn,Encoder_temp,Turn_Convert=0.9,Turn_Count;
-	  float Kp=42,Kd=0;
-		Turn=-Turn_Target*Kp -gyro*Kd;                 //===½áºÏZÖáÍÓÂÝÒÇ½øÐÐPD¿ØÖÆ
-	  return Turn;
+	static float Turn_Target,Turn,Encoder_temp,Turn_Convert=0.9,Turn_Count;
+	Turn=-Turn_Target*Turn_Kp -gyro*Turn_Kd;
+	return Turn;
 }
 
-void Xianfu_Pwm(void)
-{
-	int Amplitude=6900;    //===PWMÂú·ùÊÇ7200 ÏÞÖÆÔÚ6900
+//void Xianfu_Pwm(volatile int *leftPwm, volatile int *rightPwm)
+//{
+//	int Amplitude=6900;    //===PWMÂú·ùÊÇ7200 ÏÞÖÆÔÚ6900
 //	if(Flag_Qian==1)  Moto1-=DIFFERENCE;  //DIFFERENCEÊÇÒ»¸öºâÁ¿Æ½ºâÐ¡³µµç»úºÍ»úÐµ°²×°²îÒìµÄÒ»¸ö±äÁ¿¡£Ö±½Ó×÷ÓÃÓÚÊä³ö£¬ÈÃÐ¡³µ¾ßÓÐ¸üºÃµÄÒ»ÖÂÐÔ¡£
 //	if(Flag_Hou==1)   Moto2+=DIFFERENCE;
-    if(Moto1<-Amplitude) Moto1=-Amplitude;
-    if(Moto1>Amplitude)  Moto1=Amplitude;
-    if(Moto2<-Amplitude) Moto2=-Amplitude;
-    if(Moto2>Amplitude)  Moto2=Amplitude;
+//	if(*rightPwm<-Amplitude) Moto2=-Amplitude;
+//	else if(*rightPwm>Amplitude)  Moto2=Amplitude;
+//    if(*leftPwm<-Amplitude) Moto1=-Amplitude;
+//    else if(*leftPwm>Amplitude)  Moto1=Amplitude;
 
-}
 
-void getAngle(void)
+//}
+
+void getAngle(volatile float *Gyro_Balance, volatile float *Angle_Balance, volatile float *Gyro_Turn, volatile float *Acceleration_Z)
 {
 	unsigned char buf[6];
 //	MPU6050_ReadData(MPU6050_GYRO_OUT,buf,6);
+	__no_operation();
 	txData[0]=MPU6050_GYRO_OUT;
 	sendI2C(txData,1,NO_STOP);
+	__no_operation();//0x0078
 	readI2CBytes(6,buf);
+	__no_operation();//0x014B
 	gyro[0] = (buf[0] << 8) + buf[1];
 	gyro[1] = (buf[2] << 8) + buf[3];
 	gyro[2] = (buf[4] << 8) + buf[5];
 //	MPU6050_ReadData(MPU6050_ACC_OUT, buf, 6);
+	__no_operation();
 	txData[0]=MPU6050_ACC_OUT;
 	sendI2C(txData,1,NO_STOP);
+	__no_operation();
 	readI2CBytes(6,buf);
+	__no_operation();
 	accel[0] = (buf[0] << 8) + buf[1];
 	accel[1] = (buf[2] << 8) + buf[3];
 	accel[2] = (buf[4] << 8) + buf[5];
    	//readMPU6050GyroFloat(gyro);
    	//readMPU6050AccFloat(accel);
+	__no_operation();
 	if(gyro[1]>32768)  gyro[1]-=65536;
 	if(gyro[2]>32768)  gyro[2]-=65536;
 	if(accel[0]>32768) accel[0]-=65536;
 	if(accel[2]>32768) accel[2]-=65536;
-	Gyro_Balance=-gyro[1];
+	__no_operation();//0x004B
+	*Gyro_Balance=-gyro[1];
+	__no_operation();//0X8BA9
 	accel[1]=atan2(accel[0],accel[2])*180/PI;
+	__no_operation();//0xb000
 	gyro[1]=gyro[1]/16.4;
-	Yijielvbo(accel[1],-gyro[1]);
-	Angle_Balance=angle;                                   //¸üÐÂÆ½ºâÇã½Ç
-	Gyro_Turn=gyro[2];                                      //¸üÐÂ×ªÏò½ÇËÙ¶È
-	Acceleration_Z=accel[2];
+	__no_operation();
+	*Angle_Balance=Yijielvbo(accel[1],-gyro[1]);
+	__no_operation();//¸üÐÂÆ½ºâÇã½Ç
+	*Gyro_Turn=gyro[2];
+	__no_operation();//¸üÐÂ×ªÏò½ÇËÙ¶È
+	*Acceleration_Z=accel[2];
+	__no_operation();
 }
 
 
